@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        * {
+            font-size: 12px;
+            font-family: 'Times New Roman';
+        }
+
+        td,
+        th,
+        tr,
+        table {
+            border-top: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td.description,
+        th.description {
+            width: 120px;
+            max-width: 120px;
+        }
+
+        td.quantity,
+        th.quantity {
+            width: 70px;
+            max-width: 70px;
+            word-break: break-all;
+        }
+
+        td.srNum,
+        th.srNum {
+            width: 20px;
+            max-width: 20px;
+            word-break: break-all;
+        }
+
+        td.price,
+        th.price {
+            width: 45px;
+            max-width: 45px;
+            word-break: break-all;
+        }
+
+        .centered {
+            text-align: center;
+            align-content: center;
+        }
+
+        .ticket {
+            width: 300px;
+            max-width: 300px;
+        }
+
+        img {
+            max-width: inherit;
+            width: inherit;
+        }
+
+        @media print {
+
+            .hidden-print,
+            .hidden-print * {
+                display: none !important;
+            }
+        }
+    </style>
+    <title>Receipt example</title>
+</head>
+
+<body>
+    <div class="ticket">
+        <img src="images/logo.jpeg" alt="">
+        <p class="centered">Lahori Village Restaurant
+            <br> By: Smart Standards for food service (SSC)
+            <br>2667 Prince Nayef Bin Abdulaziz Street - King Fahd Riyadh, Saudi Arabia 12271
+            <br>Phone no +966565566003
+            <br>VAT NO: 311221066200003
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th class="srNum">Sr#</th>
+                    <th class="description">Name</th>
+                    <th class="price">Price</th>
+                    <th class="quantity">Quantity</th>
+                    <th class="price">Total</th>
+                </tr>
+            </thead>
+            <tbody id="slipBody">
+
+
+            </tbody>
+        </table>
+
+        <p class="centered">Thanks for your purchase!</p>
+        <h6 class="centered">Simplified Tax Invoice</h6>
+        <h6 class="centered" id="reciptNum"></h6>
+        <p class="centered" id="hash"></p>
+        <canvas class="centered" id="qr-code"></canvas>
+    </div>
+
+    <script src="POS1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+    <script>
+        
+        /* JS comes here */
+        let now = Date();
+        let VAT = 15;
+        let Total_with_VAT = 115;
+        let recipt_number = 12;
+
+        const cyrb53 = function (str, seed = 0) {
+            let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+            for (let i = 0, ch; i < str.length; i++) {
+                ch = str.charCodeAt(i);
+                h1 = Math.imul(h1 ^ ch, 2654435761);
+                h2 = Math.imul(h2 ^ ch, 1597334677);
+            }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+        };
+
+        let recipt_hash = cyrb53(recipt_number);
+
+        document.getElementById('reciptNum').innerText = 'Recipt # ' + String(recipt_number);
+        document.getElementById('hash').innerText = `Hash = ${recipt_hash}`;
+        var qr;
+        var qrtext = `Lahori  Village Restaurant \n By \n Smart Standards for food service (SSC) \n VAT NO: 311221066200003 \n ${now} \n VAT amount = ${VAT} \n Total amount with VAT = ${Total_with_VAT} \n Date : ${now}`;
+
+        (function () {
+            qr = new QRious({
+                element: document.getElementById('qr-code'),
+                size: 150,
+                value: qrtext
+            });
+        })();
+        
+
+        let slip = 'Muhammad Mohib'
+
+        document.getElementById('slipBody').innerHTML = myslip;
+
+
+
+
+
+        // function download(link) {
+        //     var element = document.createElement('a');
+        //     element.setAttribute('href', link);
+
+        //     element.style.display = 'none';
+        //     document.body.appendChild(element);
+
+        //     element.click();
+
+        //     document.body.removeChild(element);
+        // }
+
+        // download('recipt.html');
+        window.print();
+
+
+    </script>
+</body>
+
+</html>
